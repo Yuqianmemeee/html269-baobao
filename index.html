@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>&#25746;&#21733;&#20081;&#21495;&#21161;&#25163;</title>
+    <style>
+      :root {
+        --paper: #fffefa;
+        --ink: #111111;
+        --red: #f2081f;
+        --red-deep: #b90015;
+        --blue: #0671c9;
+        --blue-deep: #004f9f;
+        --yellow: #fff238;
+        --muted: #5c5c5c;
+        --shadow: 0 18px 45px rgba(17, 17, 17, 0.12);
+        font-family: Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(90deg, rgba(242, 8, 31, 0.08) 1px, transparent 1px),
+          linear-gradient(0deg, rgba(6, 113, 201, 0.08) 1px, transparent 1px),
+          var(--paper);
+        background-size: 36px 36px;
+      }
+
+      button,
+      textarea,
+      select,
+      input {
+        font: inherit;
+      }
+
+      .app-shell {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: clamp(18px, 4vw, 52px);
+      }
+
+      .tool {
+        width: min(100%, 640px);
+        padding: clamp(20px, 5vw, 36px);
+        background: rgba(255, 254, 250, 0.94);
+        border: 1px solid rgba(17, 17, 17, 0.08);
+        box-shadow: var(--shadow);
+      }
+
+      .brand {
+        display: grid;
+        justify-items: center;
+        gap: 6px;
+        margin-bottom: clamp(20px, 4vw, 30px);
+      }
+
+      .brand-mark {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: end;
+        gap: 14px;
+        width: min(420px, 88%);
+        line-height: 0.86;
+        font-weight: 950;
+        font-size: clamp(64px, 14vw, 112px);
+      }
+
+      .brand-block {
+        display: grid;
+        place-items: center;
+        min-height: clamp(88px, 18vw, 136px);
+        background: #fff;
+        letter-spacing: 0;
+        text-shadow: 5px 4px 0 rgba(17, 17, 17, 0.08);
+      }
+
+      .brand-block-red {
+        color: var(--red);
+        border: 14px solid var(--red);
+        border-right-width: 0;
+        transform: skewX(-1deg);
+      }
+
+      .brand-block-blue {
+        color: var(--blue);
+        border: 14px solid var(--blue);
+        border-left-width: 0;
+        transform: skewX(1deg);
+      }
+
+      .brand h1 {
+        margin: 0;
+        color: var(--red);
+        font-size: clamp(34px, 8vw, 58px);
+        font-weight: 950;
+        font-style: italic;
+        line-height: 0.95;
+        letter-spacing: 0;
+        text-shadow: 3px 3px 0 rgba(6, 113, 201, 0.12);
+      }
+
+      .workbench {
+        display: grid;
+        gap: 16px;
+      }
+
+      .field-label {
+        display: block;
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .number-box {
+        width: 100%;
+        min-height: clamp(170px, 30vh, 240px);
+        resize: vertical;
+        padding: 18px;
+        color: var(--ink);
+        background: #fff;
+        border: 12px solid var(--red);
+        outline: 2px solid var(--red-deep);
+        outline-offset: -19px;
+        box-shadow:
+          inset 0 0 15px rgba(17, 17, 17, 0.18),
+          0 8px 0 rgba(185, 0, 21, 0.13);
+        font-family: Consolas, monospace;
+        font-size: clamp(20px, 4vw, 30px);
+        font-weight: 800;
+        line-height: 1.45;
+      }
+
+      .number-box:focus {
+        border-color: var(--blue);
+        outline-color: var(--blue-deep);
+      }
+
+      .controls {
+        display: grid;
+        gap: 8px;
+      }
+
+      .separator-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .separator-row.is-custom {
+        grid-template-columns: minmax(0, 1fr) minmax(92px, 140px);
+      }
+
+      .separator-select,
+      .custom-separator {
+        width: 100%;
+        height: 50px;
+        padding: 0 14px;
+        color: var(--ink);
+        background: #fff;
+        border: 3px solid var(--yellow);
+        border-radius: 8px;
+        font-weight: 800;
+        outline: none;
+      }
+
+      .custom-separator[hidden] {
+        display: none;
+      }
+
+      .separator-select:focus,
+      .custom-separator:focus,
+      .action-button:focus-visible {
+        box-shadow: 0 0 0 4px rgba(6, 113, 201, 0.18);
+        border-color: var(--blue);
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px clamp(18px, 7vw, 96px);
+        padding: 6px clamp(4px, 4vw, 28px) 0;
+      }
+
+      .action-button {
+        min-height: 72px;
+        padding: 8px 18px;
+        color: var(--ink);
+        background: #fff;
+        border: 4px solid var(--yellow);
+        border-radius: 26px;
+        font-size: clamp(26px, 6vw, 43px);
+        font-weight: 950;
+        line-height: 1;
+        cursor: pointer;
+        touch-action: manipulation;
+        box-shadow: 0 6px 0 rgba(17, 17, 17, 0.08);
+        transition:
+          transform 150ms ease,
+          box-shadow 150ms ease,
+          border-color 150ms ease,
+          color 150ms ease;
+      }
+
+      .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 9px 0 rgba(17, 17, 17, 0.08);
+      }
+
+      .action-button:active {
+        transform: translateY(2px);
+        box-shadow: 0 3px 0 rgba(17, 17, 17, 0.1);
+      }
+
+      .action-primary {
+        color: var(--red);
+      }
+
+      .status {
+        min-height: 24px;
+        margin: 0;
+        color: var(--muted);
+        text-align: center;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      @media (max-width: 480px) {
+        .tool {
+          padding: 18px;
+        }
+
+        .brand-mark {
+          gap: 8px;
+          width: 100%;
+        }
+
+        .brand-block-red,
+        .brand-block-blue {
+          border-width: 10px;
+        }
+
+        .brand-block-red {
+          border-right-width: 0;
+        }
+
+        .brand-block-blue {
+          border-left-width: 0;
+        }
+
+        .number-box {
+          border-width: 9px;
+          outline-offset: -15px;
+        }
+
+        .separator-row,
+        .separator-row.is-custom {
+          grid-template-columns: 1fr;
+        }
+
+        .actions {
+          gap: 14px;
+          padding-inline: 0;
+        }
+
+        .action-button {
+          min-height: 62px;
+          border-radius: 22px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="tool" aria-label="&#25746;&#21733;&#20081;&#21495;&#21161;&#25163;">
+        <header class="brand" aria-label="&#25746;&#21733;&#20081;&#21495;&#21161;&#25163;">
+          <div class="brand-mark">
+            <span class="brand-block brand-block-red">&#25746;</span>
+            <span class="brand-block brand-block-blue">&#21733;</span>
+          </div>
+          <h1>&#20081;&#21495;&#21161;&#25163;</h1>
+        </header>
+
+        <form class="workbench" onsubmit="return false;">
+          <label class="field-label" for="numberBox">&#21495;&#30721;&#20869;&#23481;</label>
+          <textarea
+            id="numberBox"
+            class="number-box"
+            spellcheck="false"
+            inputmode="text"
+            placeholder="12, 08, 41, 99, 06"
+          ></textarea>
+
+          <div class="controls" aria-label="&#20998;&#38548;&#31526;&#36873;&#25321;">
+            <label class="field-label" for="separatorSelect">&#20998;&#38548;&#31526;</label>
+            <div class="separator-row">
+              <select id="separatorSelect" class="separator-select" aria-label="&#20998;&#38548;&#31526;">
+                <option value=",">&#36887;&#21495; ,</option>
+                <option value="&#65292;">&#20013;&#25991;&#36887;&#21495; &#65292;</option>
+                <option value=" ">&#31354;&#26684;</option>
+                <option value="\n">&#25442;&#34892;</option>
+                <option value="|">&#31446;&#32447; |</option>
+                <option value=";">&#20998;&#21495; ;</option>
+                <option value="/">&#26012;&#26464; /</option>
+                <option value="custom">&#33258;&#23450;&#20041;</option>
+              </select>
+              <input
+                id="customSeparator"
+                class="custom-separator"
+                type="text"
+                maxlength="8"
+                aria-label="&#33258;&#23450;&#20041;&#20998;&#38548;&#31526;"
+                placeholder="&#31526;&#21495;"
+                hidden
+              />
+            </div>
+          </div>
+
+          <div class="actions" aria-label="&#25805;&#20316;">
+            <button class="action-button action-primary" type="button" id="shuffleButton">
+              &#19968;&#38190;&#20081;&#30721;
+            </button>
+            <button class="action-button" type="button" id="separatorButton">&#25442;&#31526;&#21495;</button>
+            <button class="action-button" type="button" id="copyButton">&#22797;&#21046;</button>
+            <button class="action-button" type="button" id="pasteButton">&#31896;&#36148;</button>
+          </div>
+
+          <p class="status" id="status" role="status" aria-live="polite">&#24050;&#23601;&#32490;</p>
+        </form>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const numberBox = document.querySelector("#numberBox");
+        const separatorSelect = document.querySelector("#separatorSelect");
+        const customSeparator = document.querySelector("#customSeparator");
+        const shuffleButton = document.querySelector("#shuffleButton");
+        const separatorButton = document.querySelector("#separatorButton");
+        const copyButton = document.querySelector("#copyButton");
+        const pasteButton = document.querySelector("#pasteButton");
+        const separatorRow = document.querySelector(".separator-row");
+        const status = document.querySelector("#status");
+
+        const baseSplitter = /[\s,\uFF0C\u3001;:\uFF1B\uFF1A|\uFF5C\/\uFF0F\\]+/u;
+        const baseSplitterSource = "[\\s,\\uFF0C\\u3001;:\\uFF1B\\uFF1A|\\uFF5C/\\uFF0F\\\\]+";
+
+        function setStatus(message) {
+          status.textContent = message;
+        }
+
+        function escapeRegExp(value) {
+          return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+
+        function getSeparator() {
+          if (separatorSelect.value === "custom") {
+            return customSeparator.value || " ";
+          }
+
+          if (separatorSelect.value === "\\n") {
+            return "\n";
+          }
+
+          return separatorSelect.value;
+        }
+
+        function getSplitter() {
+          const separator = getSeparator();
+
+          if (!separator || /\s/u.test(separator)) {
+            return baseSplitter;
+          }
+
+          return new RegExp(`${baseSplitterSource}|(?:${escapeRegExp(separator)})+`, "u");
+        }
+
+        function getItems() {
+          const text = numberBox.value.trim();
+          const splitter = getSplitter();
+
+          if (!text) {
+            return [];
+          }
+
+          if (!splitter.test(text) && /^\d+$/u.test(text)) {
+            return Array.from(text);
+          }
+
+          return text
+            .split(splitter)
+            .map((item) => item.trim())
+            .filter(Boolean);
+        }
+
+        function writeItems(items) {
+          numberBox.value = items.join(getSeparator());
+        }
+
+        function shuffle(items) {
+          const shuffled = [...items];
+
+          for (let index = shuffled.length - 1; index > 0; index -= 1) {
+            const randomIndex = Math.floor(Math.random() * (index + 1));
+            [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+          }
+
+          return shuffled;
+        }
+
+        function refreshCount() {
+          const count = getItems().length;
+          setStatus(count ? `\u5F53\u524D ${count} \u4E2A\u53F7\u7801` : "\u5DF2\u5C31\u7EEA");
+        }
+
+        function requireItems() {
+          const items = getItems();
+
+          if (!items.length) {
+            numberBox.focus();
+            setStatus("\u5148\u653E\u5165\u53F7\u7801");
+            return null;
+          }
+
+          return items;
+        }
+
+        function selectNumberBox() {
+          numberBox.focus();
+          numberBox.select();
+          numberBox.setSelectionRange(0, numberBox.value.length);
+        }
+
+        shuffleButton.addEventListener("click", () => {
+          const items = requireItems();
+
+          if (!items) {
+            return;
+          }
+
+          writeItems(shuffle(items));
+          setStatus(`\u5DF2\u6253\u4E71 ${items.length} \u4E2A\u53F7\u7801`);
+        });
+
+        separatorButton.addEventListener("click", () => {
+          const items = requireItems();
+
+          if (!items) {
+            return;
+          }
+
+          writeItems(items);
+          setStatus(`\u5DF2\u6362\u6210 ${separatorSelect.options[separatorSelect.selectedIndex].text}`);
+        });
+
+        copyButton.addEventListener("click", async () => {
+          if (!numberBox.value.trim()) {
+            numberBox.focus();
+            setStatus("\u6CA1\u6709\u53EF\u590D\u5236\u5185\u5BB9");
+            return;
+          }
+
+          try {
+            if (navigator.clipboard && window.isSecureContext) {
+              await navigator.clipboard.writeText(numberBox.value);
+              setStatus("\u5DF2\u590D\u5236");
+              return;
+            }
+          } catch (error) {
+          }
+
+          selectNumberBox();
+
+          try {
+            if (document.execCommand("copy")) {
+              setStatus("\u5DF2\u590D\u5236");
+              return;
+            }
+          } catch (error) {
+          }
+
+          setStatus("\u5DF2\u9009\u4E2D\uFF0C\u8BF7\u70B9\u624B\u673A\u590D\u5236");
+        });
+
+        pasteButton.addEventListener("click", async () => {
+          try {
+            if (navigator.clipboard && window.isSecureContext) {
+              const text = await navigator.clipboard.readText();
+              numberBox.value = text;
+              refreshCount();
+              numberBox.focus();
+              return;
+            }
+          } catch (error) {
+          }
+
+          numberBox.focus();
+          setStatus("\u8BF7\u5728\u8F93\u5165\u6846\u957F\u6309\u7C98\u8D34");
+        });
+
+        function syncCustomSeparator() {
+          const isCustom = separatorSelect.value === "custom";
+          customSeparator.hidden = !isCustom;
+          separatorRow.classList.toggle("is-custom", isCustom);
+
+          if (isCustom) {
+            customSeparator.focus();
+          }
+        }
+
+        separatorSelect.addEventListener("change", syncCustomSeparator);
+
+        numberBox.addEventListener("input", refreshCount);
+        customSeparator.addEventListener("input", refreshCount);
+        syncCustomSeparator();
+      })();
+    </script>
+  </body>
+</html>
